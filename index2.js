@@ -12,8 +12,6 @@ http.createServer((request, response) => {
         }).on('end', () => {
             body = JSON.parse(body.toString());
             console.log(body)
-            mac1=body.mac
-            console.log(mac1)
             // At this point, we have the headers, method, url and body, and can now
             // do whatever we need to in order to respond to this request.
         });
