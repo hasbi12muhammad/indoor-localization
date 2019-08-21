@@ -29,8 +29,10 @@ http.createServer((request, response) => {
                 db.serialize(function () {
                     let sql = `INSERT INTO rssi_table (ruang,date_time,beacon1,beacon2) VALUES (?,?,?,?)`;
                     let stmt = db.prepare(sql);
+                    let date_time = new Date();
+                    let time = date_time.getHours()+':'+date_time.getMinutes()+':'+date_time.getSeconds();
                     var values = [
-                        ["Ruang 1", new Date(Date.now()).toString(), rssi[0], rssi[1]]
+                        ["Ruang 1", time.toString(), rssi[0], rssi[1]]
                     ];
                     values.forEach((value) => {
                         stmt.run(value, (err) => {
