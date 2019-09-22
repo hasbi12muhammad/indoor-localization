@@ -1,15 +1,20 @@
-let db = require('D:/DATA KULIAH/SEMESTER VIII/SKRIPSI!!!/SERVER/database/config_db.js');
+//inisialisasi database
+let db = require('D:/DATA KULIAH/SEMESTER VIII/SKRIPSI!!!/The Code/database/config_db.js');
+
+//inisialisasi variabel server
 const http = require('http');
-//let mac1;
+
+//inisialisasi variabel mac esp32
 const mac1 = "3C:71:BF:C4:E1:F4";
 const mac2 = "B4:E6:2D:B7:72:45";
 
-//let post = []
+//variabel untuk menyimpan rssi yang dikirim esp32
 let rssi = []
+
+//membuat server
 http.createServer((request, response) => {
     const { headers, method, url } = request;
     let body = [];
-    // let url = request.url;
     if (url == "/tahap1") {
         request.on('error', (err) => {
             console.error(err);
@@ -30,9 +35,25 @@ http.createServer((request, response) => {
                     let sql = `INSERT INTO rssi_table (ruang,date_time,beacon1,beacon2) VALUES (?,?,?,?)`;
                     let stmt = db.prepare(sql);
                     let date_time = new Date();
-                    let time = date_time.getHours()+':'+date_time.getMinutes()+':'+date_time.getSeconds();
+                    let hr, mnt, sec;
+                    if (date_time.getHours() < 10) {
+                        hr = "0" + date_time.getHours()
+                    } else {
+                        hr = date_time.getHours()
+                    }
+                    if (date_time.getMinutes() < 10) {
+                        mnt = "0" + date_time.getMinutes()
+                    } else {
+                        mnt = date_time.getMinutes()
+                    }
+                    if (date_time.getSeconds() < 10) {
+                        sec = "0" + date_time.getSeconds()
+                    } else {
+                        sec = date_time.getSeconds()
+                    }
+                    let time = hr + ':' + mnt + ':' + sec;
                     var values = [
-                        ["Ruang 1", time.toString(), rssi[0], rssi[1]]
+                        ["Ruang 2", time.toString(), rssi[0], rssi[1]]
                     ];
                     values.forEach((value) => {
                         stmt.run(value, (err) => {

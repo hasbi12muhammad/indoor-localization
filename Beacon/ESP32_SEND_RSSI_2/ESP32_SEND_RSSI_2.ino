@@ -3,13 +3,13 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 
-#define ADDRESS "FF:FF:C2:0F:ED:8D" 
+#define ADDRESS "cc:9f:7a:7a:cf:35"//"FF:FF:C2:0F:ED:8D" 
 
 const char* ssid = "Nokia 3";
 const char* password = "hasbi1202";
 
-BLEScan* pBLEScan; //Variável que irá guardar o scan
-boolean found = false; //Se encontrou o iTag no último scan
+BLEScan* pBLEScan; //VariÃ¡vel que irÃ¡ guardar o scan
+boolean found = false; //Se encontrou o iTag no Ãºltimo scan
 int rssi = 0;
 String mac;
 StaticJsonDocument<200> json;
@@ -19,20 +19,18 @@ class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks
 {
     void onResult(BLEAdvertisedDevice advertisedDevice)
     {
-      rssi = advertisedDevice.getRSSI();
-
-      if (advertisedDevice.getAddress().toString() == ADDRESS)
+      if (advertisedDevice.getAddress().toString() == "cc:9f:7a:7a:cf:35")
       {
         found = true;
+        rssi = advertisedDevice.getRSSI();
         advertisedDevice.getScan()->stop();
+        
       }
     }
 };
 
 void setup()
 {
-  Serial.begin(115200);
-
   Serial.begin(115200);
   delay(4000);   //Delay needed before calling the WiFi.begin
 
@@ -47,7 +45,7 @@ void setup()
 
   Serial.println(WiFi.macAddress());
   mac = String(WiFi.macAddress());
-  
+
   BLEDevice::init("");
   pBLEScan = BLEDevice::getScan();
   pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
@@ -62,21 +60,21 @@ void loop()
 
   http.begin("http://192.168.43.242:8080/tahap1");  //Specify destination for HTTP request
   http.addHeader("Content-Type", "application/json");             //Specify content-type header
-
+  http.setTimeout(500);
   String postMessage;
 
   json["mac"] = mac;
   json["rssi"] = rssi;
-  
+
   serializeJson(json, postMessage);
 
   int httpResponseCode = http.POST(postMessage); //Send the actual POST request
 
   http.end();
-  
+
   Serial.print("RSSI: ");
   Serial.println(rssi);
-  
+
   pBLEScan->clearResults();
   json.JsonDocument::clear();
   rssi = 0;
