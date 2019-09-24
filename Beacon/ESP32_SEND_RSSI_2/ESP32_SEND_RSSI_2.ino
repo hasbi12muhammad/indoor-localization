@@ -3,7 +3,7 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 
-#define ADDRESS "cc:9f:7a:7a:cf:35"//"FF:FF:C2:0F:ED:8D" 
+#define ADDRESS "FF:FF:C2:0F:ED:8D" 
 
 const char* ssid = "Nokia 3";
 const char* password = "hasbi1202";
@@ -19,7 +19,7 @@ class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks
 {
     void onResult(BLEAdvertisedDevice advertisedDevice)
     {
-      if (advertisedDevice.getAddress().toString() == "cc:9f:7a:7a:cf:35")
+      if (advertisedDevice.getAddress().toString() == ADDRESS)
       {
         found = true;
         rssi = advertisedDevice.getRSSI();

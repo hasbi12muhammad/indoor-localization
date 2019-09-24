@@ -82,8 +82,6 @@ standard_input.on('data', function (input) {
                     rssi[0] = null
                     rssi[1] = null
                 }
-                // At this point, we have the headers, method, url and body, and can now
-                // do whatever we need to in order to respond to this request.
             });
         }
     }).listen(8080);

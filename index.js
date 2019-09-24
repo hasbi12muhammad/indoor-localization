@@ -31,38 +31,42 @@ http.createServer((request, response) => {
             if (rssi[0] == null || rssi[1] == null) {
                 console.log("waiting another rssi...")
             } else if (rssi[0] != null && rssi[1] != null) {
-                db.serialize(function () {
-                    let sql = `INSERT INTO rssi_table (ruang,date_time,beacon1,beacon2) VALUES (?,?,?,?)`;
-                    let stmt = db.prepare(sql);
-                    let date_time = new Date();
-                    let hr, mnt, sec;
-                    if (date_time.getHours() < 10) {
-                        hr = "0" + date_time.getHours()
-                    } else {
-                        hr = date_time.getHours()
-                    }
-                    if (date_time.getMinutes() < 10) {
-                        mnt = "0" + date_time.getMinutes()
-                    } else {
-                        mnt = date_time.getMinutes()
-                    }
-                    if (date_time.getSeconds() < 10) {
-                        sec = "0" + date_time.getSeconds()
-                    } else {
-                        sec = date_time.getSeconds()
-                    }
-                    let time = hr + ':' + mnt + ':' + sec;
-                    var values = [
-                        ["Ruang 2", time.toString(), rssi[0], rssi[1]]
-                    ];
-                    values.forEach((value) => {
-                        stmt.run(value, (err) => {
-                            if (err) throw err;
+                if (rssi[0] == 0 && rssi[1] == 0) {
+                    console.log("All RSSI value is 0")
+                }else{
+                    db.serialize(function () {
+                        let sql = `INSERT INTO rssi_table (ruang,date_time,beacon1,beacon2) VALUES (?,?,?,?)`;
+                        let stmt = db.prepare(sql);
+                        let date_time = new Date();
+                        let hr, mnt, sec;
+                        if (date_time.getHours() < 10) {
+                            hr = "0" + date_time.getHours()
+                        } else {
+                            hr = date_time.getHours()
+                        }
+                        if (date_time.getMinutes() < 10) {
+                            mnt = "0" + date_time.getMinutes()
+                        } else {
+                            mnt = date_time.getMinutes()
+                        }
+                        if (date_time.getSeconds() < 10) {
+                            sec = "0" + date_time.getSeconds()
+                        } else {
+                            sec = date_time.getSeconds()
+                        }
+                        let time = hr + ':' + mnt + ':' + sec;
+                        var values = [
+                            ["Ruang 2", time.toString(), rssi[0], rssi[1]]
+                        ];
+                        values.forEach((value) => {
+                            stmt.run(value, (err) => {
+                                if (err) throw err;
+                            });
                         });
+                        console.log(`${values.length} record inserted`);
+                        stmt.finalize();
                     });
-                    console.log(`${values.length} record inserted`);
-                    stmt.finalize();
-                });
+                }
                 rssi[0] = null
                 rssi[1] = null
             }
